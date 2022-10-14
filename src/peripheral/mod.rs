@@ -67,6 +67,7 @@ pub mod cbp;
 pub mod cpuid;
 pub mod dcb;
 pub mod dwt;
+pub mod etm;
 #[cfg(not(armv6m))]
 pub mod fpb;
 // NOTE(native) is for documentation purposes
@@ -339,6 +340,20 @@ impl ops::Deref for DWT {
     fn deref(&self) -> &Self::Target {
         unsafe { &*Self::PTR }
     }
+}
+
+/// Embedded Trace Macrocell
+#[allow(clippy::upper_case_acronyms)]
+pub struct ETM {
+    _marker: PhantomData<*const ()>,
+}
+
+unsafe impl Send for ETM {}
+
+#[cfg(all(not(armv6m), not(armv8m_base)))]
+impl ETM {
+    /// Pointer to the register block
+    pub const PTR: *mut etm::RegisterBlock = 0xE004_1000 as *mut _;
 }
 
 /// Flash Patch and Breakpoint unit
